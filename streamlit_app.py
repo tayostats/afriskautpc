@@ -71,8 +71,9 @@ st.sidebar.title("Player Search and Filter")
 player_name = st.sidebar.selectbox("Select a Player", df['player_name'].unique())
 
 # Get player data
-player_data = df[df['player_name'] == player_name]
-
+#player_data = df[df['player_name'] == player_name]
+# Get player data, using the first occurrence of the player
+player_data = df[df['player_name'] == player_name].iloc[0:1]  # Get the first occurrence
 # Check if player_data is not empty
 if player_data.empty:
     st.error("Player not found in the dataset.")
