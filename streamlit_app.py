@@ -40,37 +40,43 @@ role_metrics = {
                        'percentile_assists', 'percentile_crosses', 'percentile_ground_duels', 'percentile_aerial_duels'],
 }
 role_metrics2 = {
-    'goalkeeper': ['rate_saves', 'rate_conceded', 'rate_claims', 'general_metric'],
+    'goalkeeper': ['rate_saves', 'rate_conceded', 'rate_claims', 'success_rate_passes','attempted_passes','general_metric'],
     'right back': ['success_rate_passes', 'attempted_passes','success_rate_tackles','attempted_tackles', 'rate_int_value',
                    'rate_block_value', 'success_rate_ground_duels','attempted_ground_duels', 'success_rate_aerial_duels',
-                   'attempted_aerial_duels','rate_clearance_value', 'success_rate_crosses','attempted_crosses', 'general_metric'],
+                   'attempted_aerial_duels','rate_clearance_value', 'success_rate_crosses','attempted_crosses', 'success_rate_dribbles', 'attempted_dribbles', 
+          'cumulative_assist','cumulative_is_goal','rate_progressive_carries','general_metric'],
     'left back': ['success_rate_passes', 'attempted_passes','success_rate_tackles','attempted_tackles', 'rate_int_value',
                    'rate_block_value', 'success_rate_ground_duels','attempted_ground_duels', 'success_rate_aerial_duels',
-                   'attempted_aerial_duels','rate_clearance_value', 'success_rate_crosses','attempted_crosses', 'general_metric'],
+                   'attempted_aerial_duels','rate_clearance_value', 'success_rate_crosses','attempted_crosses', 'success_rate_dribbles', 'attempted_dribbles',
+          'cumulative_assist','cumulative_is_goal','rate_progressive_carries','general_metric'],
     'center back': ['success_rate_passes','attempted_passes', 'success_rate_tackles','attempted_tackles', 'rate_int_value', 
                     'rate_block_value', 'success_rate_ground_duels', 'attempted_ground_duels', 'success_rate_aerial_duels',
-                    'attempted_aerial_duels','rate_clearance_value', 'general_metric'],
+                    'attempted_aerial_duels','rate_clearance_value', 'rate_progressive_carries','success_rate_dribbles', 'attempted_dribbles',
+          'cumulative_assist','cumulative_is_goal','general_metric'],
     'defensive midfielder': ['success_rate_passes', 'attempted_passes','success_rate_dribbles','attempted_dribbles', 'success_rate_tackles',
-          'attempted_tackles','rate_assist', 'rate_key_pass_value', 'success_rate_ground_duels', 'attempted_ground_duels',
-          'success_rate_aerial_duels','attempted_aerial_duels', 'rate_progressive', 'general_metric'],
-    'central midfielder': ['success_rate_passes','attempted_passes', 'success_rate_dribbles', 'attempted_dribbles','success_rate_tackles','attempted_tackles',
-          'rate_assist', 'rate_key_pass_value', 'success_rate_ground_duels', 'attempted_ground_duels',
+          'attempted_tackles','rate_assist',
+          'cumulative_assist','cumulative_is_goal', 'rate_key_pass_value', 'success_rate_ground_duels', 'attempted_ground_duels',
+          'success_rate_aerial_duels','attempted_aerial_duels', 'rate_progressive', 'rate_progressive_carries','general_metric'],
+    'central midfielder': ['success_rate_passes','attempted_passes', 'success_rate_dribbles', 'attempted_dribbles','success_rate_tackles','rate_progressive_carries','attempted_tackles',
+          'rate_assist',
+          'cumulative_assist','cumulative_is_goal', 'rate_key_pass_value', 'success_rate_ground_duels', 'attempted_ground_duels',
           'success_rate_aerial_duels', 'attempted_aerial_duels','rate_progressive', 'general_metric'],
     'attacking midfielder': ['success_rate_passes','attempted_passes', 'success_rate_dribbles','attempted_dribbles', 'success_rate_tackles','attempted_tackles',
-          'rate_assist', 'rate_key_pass_value', 'success_rate_ground_duels','attempted_ground_duels', 
-          'success_rate_aerial_duels', 'attempted_aerial_duels','rate_progressive', 'general_metric'],
+          'rate_assist',
+          'cumulative_assist','cumulative_is_goal', 'rate_key_pass_value', 'success_rate_ground_duels','attempted_ground_duels', 
+          'success_rate_aerial_duels', 'attempted_aerial_duels','rate_progressive','rate_progressive_carries', 'general_metric'],
     'right winger': ['success_rate_dribbles', 'attempted_dribbles','success_rate_shots', 'attempted_shots', 
           'rate_assists','cumulative_assists','rate_goals', 'cumulative_is_goal', 'success_rate_crosses', 'attempted_crosses','success_rate_ground_duels', 'attempted_ground_duels',
-          'success_rate_aerial_duels', 'attempted_aerial_duels','rate_key_pass_value',  'rate_dribbles', 'general_metric'],
+          'success_rate_aerial_duels', 'attempted_aerial_duels','rate_key_pass_value', 'rate_progressive_carries', 'rate_dribbles', 'general_metric'],
     'left winger': ['success_rate_dribbles', 'attempted_dribbles','success_rate_shots', 'attempted_shots', 
           'rate_assists','cumulative_assists','rate_goals', 'cumulative_is_goal', 'success_rate_crosses', 'attempted_crosses','success_rate_ground_duels', 'attempted_ground_duels',
-          'success_rate_aerial_duels', 'attempted_aerial_duels','rate_key_pass_value',  'rate_dribbles', 'general_metric'],
+          'success_rate_aerial_duels', 'attempted_aerial_duels','rate_key_pass_value', 'rate_progressive_carries', 'rate_dribbles', 'general_metric'],
     'supporting striker': ['success_rate_dribbles', 'attempted_dribbles','success_rate_shots', 'attempted_shots', 
           'rate_assists','cumulative_assists','rate_goals', 'cumulative_is_goal', 'success_rate_crosses', 'attempted_crosses','success_rate_ground_duels', 'attempted_ground_duels',
-          'success_rate_aerial_duels', 'attempted_aerial_duels','rate_key_pass_value',  'rate_dribbles', 'general_metric'],
+          'success_rate_aerial_duels', 'attempted_aerial_duels','rate_key_pass_value','rate_progressive_carries',  'rate_dribbles', 'general_metric'],
     'center forward': ['success_rate_dribbles', 'attempted_dribbles','success_rate_shots', 'attempted_shots', 
           'rate_assists','cumulative_assists','rate_goals', 'cumulative_is_goal', 'success_rate_crosses', 'attempted_crosses','success_rate_ground_duels', 'attempted_ground_duels',
-          'success_rate_aerial_duels', 'attempted_aerial_duels','rate_key_pass_value',  'rate_dribbles', 'general_metric'],
+          'success_rate_aerial_duels', 'attempted_aerial_duels','rate_key_pass_value', 'rate_progressive_carries', 'rate_dribbles', 'general_metric'],
 }
 parameter_display_names2 = {
             'success_rate_dribbles': "Dribble Success Rate (%)",
@@ -104,7 +110,9 @@ parameter_display_names2 = {
             'attempted_shots': 'Attempted Shots',
             'general_metric': "Aggregate Weighted Score",
             'cumulative_is_goal':'Goals',
-            'cumulative_assists': 'Assists'
+            'cumulative_assist': 'Assists',
+            'cumulative_assists': 'Assists',
+            'rate_progressive_carries': 'Progressive Carries Per 90'
         }
 parameter_display_names3 = {'player_name': 'Player Name',
                            'matches_played': 'Matches Played',
@@ -126,102 +134,107 @@ if page == "Metric Table":
     #st.title("Metric Table")
 
     # Assign 'goalkeeper' to players without a role
-    df['player_role'] = df['player_role'].fillna('goalkeeper')
-
-    # Search player functionality
+    
+    # Fill NaN values in 'player_role' column with 'Goalkeeper' to handle missing values
+    df['player_role'] = df['player_role'].fillna('Goalkeeper')
+    
+    # Define position categories for organizational purposes
+    position_categories = {
+        'Defender': ['Center Back', 'Left Back', 'Right Back'],
+        'Midfielder': ['Defensive Midfielder', 'Central Midfielder', 'Attacking Midfielder'],
+        'Forward': ['Left Winger', 'Right Winger', 'Supporting Striker', 'Center Forward'],
+        'Goalkeeper': ['Goalkeeper']
+    }
+    
+    # Define the set of forward roles that can be combined
+    forward_roles = {'Left Winger', 'Right Winger', 'Supporting Striker', 'Center Forward'}
+    
+    # Function to filter players by role based on specified criteria
+    def filter_by_selected_role(df, selected_role):
+        # Condition 1: Players with the selected role as their sole or primary role
+        primary_role_df = df[df['player_role'].str.split(',').str[0].str.strip() == selected_role]
+    
+        # Condition 2: For forward roles, include players with combinations involving the selected role
+        if selected_role in forward_roles:
+            # Include players where the selected role is in a combination of forward roles
+            combined_roles_df = df[
+                df['player_role'].apply(lambda x: any(role.strip() == selected_role for role in x.split(',')))  # Check if selected_role is present
+                & df['player_role'].apply(lambda x: set(r.strip() for r in x.split(',')) <= forward_roles)  # Ensure all roles in combination are forward roles
+            ]
+            
+            # Concatenate primary role players and forward role combinations
+            return pd.concat([primary_role_df, combined_roles_df]).drop_duplicates()
+    
+        # For other roles, only include players with the role as their sole or primary role
+        return primary_role_df
+    
+    # Player Search Functionality
     player_name_search = st.text_input("Search Player by Name (Optional)", "", help="Enter a player name to search.")
-
     if player_name_search:
         # Filter DataFrame by player name, ignoring other filters
         search_df = df[df['player_name'].str.contains(player_name_search, case=False, na=False)]
-
+        
         if not search_df.empty:
             # Get the first matching player's role to determine relevant metrics
-            player_role = search_df.iloc[0]['player_role'].lower()
+            player_role = search_df.iloc[0]['player_role'].split(',')[0].strip().lower()  # Get primary role
             role_columns = role_metrics2.get(player_role, [])
             display_columns = core_columns + role_columns
             
             # Filter and select relevant columns for the player's role
             search_df = search_df[display_columns]
-
+            
             # Normalize metrics that start with "success_"
             for col in search_df.columns:
                 if col.startswith("success_"):
                     search_df[col] = search_df[col] * 100
-
+            
             # Rename columns based on parameter_display_names2 and parameter_display_names3
             search_df = search_df.rename(columns={**parameter_display_names2, **parameter_display_names3})
-
+            
             # Display the result
             st.write(f"## Search Results for '{player_name_search}'")
             st.dataframe(search_df)
         
         else:
             st.warning(f"No player found with the name '{player_name_search}'.")
-
     else:
-        # In-page controls for filtering
-        matches_played = st.slider("Matches Played (3+)", min_value=1, max_value=7, value=3, help="Filter players by the number of matches played.")
-        player_role = st.selectbox("Select Role", list(role_metrics2.keys()), help="Choose a player role to filter relevant columns.")
-        num_rows = st.slider("Number of Rows to Display", min_value=1, max_value=100, value=5, help="Select the number of rows to display.")
-
-        # Filter DataFrame based on matches played
-        if matches_played == 7:
-            filtered_df = df[df['matches_played'] >= 7]  # "7+" matches
-        elif matches_played == 6:
-            filtered_df = df[df['matches_played'] >= 6]
-        elif matches_played == 5:
-            filtered_df = df[df['matches_played'] >= 5]
-        elif matches_played == 4:
-            filtered_df = df[df['matches_played'] >= 4]
-        elif matches_played == 3:
-            filtered_df = df[df['matches_played'] >= 3]
-        elif matches_played == 2:
-            filtered_df = df[df['matches_played'] >= 2]
-        else:
-            filtered_df = df[df['matches_played'] == matches_played]
-
-        # Apply player role filtering in a case-insensitive, partial match manner
-        if player_role:
-            role_columns = role_metrics2.get(player_role, [])
-            
-            # Modify filtering to include partial matches for "center forward" and "supporting striker"
-            if player_role.lower() == "center forward":
-                filtered_df = filtered_df[filtered_df['player_role'].str.contains("center forward", case=False)]
-            elif player_role.lower() == "supporting striker":
-                filtered_df = filtered_df[filtered_df['player_role'].str.contains("supporting striker", case=False)]
-            else:
-                filtered_df = filtered_df[filtered_df['player_role'].str.lower() == player_role.lower()]
-
-            # Select relevant columns based on role
-            filtered_df = filtered_df[core_columns + role_columns]
-
-            # Normalize metrics that start with "success_"
-            for col in filtered_df.columns:
-                if col.startswith("success_"):
-                    filtered_df[col] = filtered_df[col] * 100
-
-            # Rename columns based on parameter_display_names2 and parameter_display_names3
-            filtered_df = filtered_df.rename(columns={**parameter_display_names2, **parameter_display_names3})
+        # Step 1: Select a broad position category
+        selected_position_category = st.selectbox("Select Position Category", list(position_categories.keys()), help="Choose a position category.")
         
-        # Display information about the rows being shown
-        st.write(f"## Displaying Top {num_rows} Players for Role: {player_role}")
-
-        # Apply the row limit based on `num_rows` after all other filters
-        filtered_df = filtered_df.head(num_rows)
-
-        # Sort the DataFrame by 'Aggregate Weighted Score' in descending order if it exists
+        # Step 2: Populate player roles based on the selected position category
+        available_roles = position_categories[selected_position_category]
+        selected_role = st.selectbox("Select Specific Player Role", available_roles, help="Choose a player role to view relevant metrics.")
+        
+        # Filter based on matches played
+        matches_played = st.slider("Matches Played ", min_value=1, max_value=7, value=3, help="Filter players by the number of matches played.")
+        filtered_df = df[df['matches_played'] >= matches_played]
+        
+        # Apply the role filtering function to get the filtered DataFrame
+        filtered_df = filter_by_selected_role(filtered_df, selected_role)
+        
+        # Select columns based on role-specific metrics
+        role_columns = role_metrics2.get(selected_role.lower(), [])
+        display_columns = core_columns + role_columns
+        filtered_df = filtered_df[display_columns]
+        
+        # Normalize metrics starting with "success_"
+        for col in filtered_df.columns:
+            if col.startswith("success_"):
+                filtered_df[col] = filtered_df[col] * 100
+        
+        # Rename columns based on mappings for display
+        filtered_df = filtered_df.rename(columns={**parameter_display_names2, **parameter_display_names3})
+        
+        # Sort by 'Aggregate Weighted Score' if it exists
         if 'Aggregate Weighted Score' in filtered_df.columns:
             filtered_df = filtered_df.sort_values(by="Aggregate Weighted Score", ascending=False)
-        else:
-            st.warning("The 'Aggregate Weighted Score' column is not found in the current data.")
-
-        # Round all numeric values to 2 decimal places
-        filtered_df = filtered_df.round(2)
-
-        # Display the filtered and sorted DataFrame
+        
+        # Display top `num_rows` players based on the selected filters
+        num_rows = st.slider("Number of Rows to Display", min_value=1, max_value=100, value=5, help="Select the number of rows to display.")
+        filtered_df = filtered_df.head(num_rows).round(2)
+        
+        st.write(f"## Displaying Top {num_rows} {selected_role}s")
         st.dataframe(filtered_df)
-
 
 # Pizza Chart Demo Page
 elif page == "Player Similarity & Percentile Rankings":
