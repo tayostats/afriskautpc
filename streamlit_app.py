@@ -885,7 +885,7 @@ elif page == "Interactive Plots":
         
         # Display dropdown for position selection
         roles_list = set(role for roles in df['player_roles'] for role in roles)
-        selected_position = st.selectbox("Select Position", options=list(roles_list))
+        selected_position = st.selectbox("Select Role", options=list(roles_list))
         
         # Filter data for selected position
         filtered_data = df[df['player_roles'].apply(lambda x: selected_position in x)]
