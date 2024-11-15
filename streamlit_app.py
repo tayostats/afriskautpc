@@ -242,12 +242,33 @@ elif page == "Player Similarity & Percentile Rankings":
     #st.title("Player Similarity & Percentile Rankings")
 
     # Sidebar - Player selection for pizza chart
-    player_name = st.selectbox("Select a Player", df['player_name'].unique())
-
-    # Get player data
-    player_data = df[df['player_name'] == player_name].iloc[0:1]  # Get the first occurrence
-
-    # Check if player_data is not empty
+    player_display_names = []
+    seen_names = set()
+    
+    for index, row in df.iterrows():
+        player_name = row['player_name']
+        team_id = row['team_id']
+        if player_name in seen_names:
+            display_name = f"{player_name} (Team ID: {team_id})"
+        else:
+            display_name = player_name
+            seen_names.add(player_name)
+        player_display_names.append(display_name)
+    
+    # Player selection dropdown
+    selected_display_name = st.selectbox("Select a Player", player_display_names)
+    selected_player_name = selected_display_name.split(" (Team ID:")[0]
+    selected_team_id = None
+    
+    if "Team ID:" in selected_display_name:
+        selected_team_id = selected_display_name.split(" (Team ID: ")[1][:-1]
+    
+    # Retrieve the selected player data
+    if selected_team_id:
+        player_data = df[(df['player_name'] == selected_player_name) & (df['team_id'] == selected_team_id)]
+    else:
+        player_data = df[df['player_name'] == selected_player_name].iloc[0:1]
+    
     if player_data.empty:
         st.error("Player not found in the dataset.")
     else:
@@ -255,24 +276,20 @@ elif page == "Player Similarity & Percentile Rankings":
         player_roles = player_data['player_role'].values[0] if 'player_role' in player_data.columns else None
         matches_played = player_data['matches_played'].values[0] if 'matches_played' in player_data.columns else None
         team_name = player_data['team_name'].values[0]
-
+    
+        # Check and split roles
         if player_roles and isinstance(player_roles, str):
             player_roles_list = player_roles.split(",")
         else:
             player_roles_list = []
-
-        # Use the first role for metrics selection if available
+    
         primary_role = player_roles_list[0].strip().lower() if player_roles_list else 'goalkeeper'
-        if primary_role in role_metrics:
-            metrics = role_metrics[primary_role]
-        else:
-            metrics = role_metrics['goalkeeper']
-            primary_role = 'goalkeeper'
-
+        metrics = role_metrics.get(primary_role, role_metrics['goalkeeper'])
+    
         player_s = player_data[metrics].round()
         player_values = [0 if v is None or np.isnan(v) else v for v in player_s.values.flatten().tolist()]
-
-        st.write(f"### {player_name} ({team_name}) - {primary_role.capitalize()}")
+    
+        st.write(f"### {selected_player_name} ({team_name}) - {primary_role.capitalize()}")
         st.write(f'Percentile Rankings vs All {primary_role + "s"}')
         if matches_played:
             st.write(f'Matches Played: {matches_played}')
@@ -305,91 +322,49 @@ elif page == "Player Similarity & Percentile Rankings":
         }
 
         baker = PyPizza(
-            params=[parameter_display_names[m] for m in metrics],
-            straight_line_color="#ffffff", last_circle_color="#ffffff",
-            last_circle_lw=2, other_circle_lw=1, other_circle_ls="-."
-        )
+        params=[parameter_display_names[m] for m in metrics],
+        straight_line_color="#ffffff", last_circle_color="#ffffff",
+        last_circle_lw=2, other_circle_lw=1, other_circle_ls="-."
+    )
 
-        fig, ax = baker.make_pizza(
-            player_values, figsize=(8, 8), param_location=110,
-            kwargs_slices=dict(facecolor="cornflowerblue", edgecolor="#ffffff", zorder=2, linewidth=1),
-            kwargs_params=dict(color="#ffffff", fontsize=12, va="center"),
-            kwargs_values=dict(color="#ffffff", fontsize=12,
-                               bbox=dict(edgecolor="#ffffff", facecolor="cornflowerblue",
-                                         boxstyle="round,pad=0.2", lw=1))
-        )
-        fig.patch.set_visible(False)
-        ax.patch.set_visible(False)
-        st.pyplot(fig, ax)
-    st.write(f"### Similar Players to {player_name}")
-    
-    # Filter dataset by role, filling NaN with 0 to avoid missing values issue
-    # Ensure metrics are properly loaded without NaN values
-    # Ensure metrics are properly loaded without NaN values
-    # Ensure metrics are properly loaded without NaN values
-    # Ensure metrics are properly loaded without NaN values
-    # Ensure metrics are properly loaded without NaN values
+    fig, ax = baker.make_pizza(
+        player_values, figsize=(8, 8), param_location=110,
+        kwargs_slices=dict(facecolor="cornflowerblue", edgecolor="#ffffff", zorder=2, linewidth=1),
+        kwargs_params=dict(color="#ffffff", fontsize=12, va="center"),
+        kwargs_values=dict(color="#ffffff", fontsize=12,
+                           bbox=dict(edgecolor="#ffffff", facecolor="cornflowerblue",
+                                     boxstyle="round,pad=0.2", lw=1))
+    )
+    fig.patch.set_visible(False)
+    ax.patch.set_visible(False)
+    st.pyplot(fig, ax)
+
+    # Similar players
     df[metrics] = df[metrics].fillna(0)
-    
-    # Filter players by the primary role or those without any roles
     role_filtered_df = df[(df['player_role'].str.contains(primary_role, case=False, na=False)) | df['player_role'].isna()]
-    
-    # Check if any players match the role or have no assigned role
+
     if role_filtered_df.empty:
         st.write(f"No players found with the role '{primary_role}'. Please check the role name and try again.")
     else:
-        # Make sure the player exists in the filtered DataFrame
-        player_data = role_filtered_df[role_filtered_df['player_name'] == player_name]
-        
+        player_data = role_filtered_df[role_filtered_df['player_name'] == selected_player_name]
+
         if player_data.empty:
-            st.write(f"No data found for '{player_name}' in the '{primary_role}' role.")
+            st.write(f"No data found for '{selected_player_name}' in the '{primary_role}' role.")
         else:
-            # Initialize variable for similar players
-            similar_players = None
-    
-            # Collect players without roles if the player has no assigned role
-            if pd.isna(player_data['player_role'].values[0]):
-                # Filter only players with no roles for comparison
-                no_role_players = role_filtered_df[role_filtered_df['player_role'].isna()]
-                if no_role_players.empty:
-                    similar_players = pd.DataFrame()  # No similar players found
-                else:
-                    # Standardize metrics for players without roles
-                    scaler = StandardScaler()
-                    scaled_metrics = scaler.fit_transform(no_role_players[metrics])
-                    
-                    # Train NearestNeighbors model on no role players
-                    model = NearestNeighbors(n_neighbors=6, algorithm='auto')
-                    model.fit(scaled_metrics)
-                    
-                    # Find the index of the player in the no role dataset
-                    player_index = no_role_players[no_role_players['player_name'] == player_name].index[0]
-                    scaled_index = no_role_players.index.get_loc(player_index)
-                    
-                    # Find similar players
-                    distances, indices = model.kneighbors([scaled_metrics[scaled_index]])
-                    similar_players = no_role_players.iloc[indices[0]].iloc[1:]  # Exclude the queried player
-            
-            else:
-                # Standardize metrics only for role-filtered players
-                scaler = StandardScaler()
-                scaled_metrics = scaler.fit_transform(role_filtered_df[metrics])
-                
-                # Train NearestNeighbors model
-                model = NearestNeighbors(n_neighbors=6, algorithm='auto')
-                model.fit(scaled_metrics)
-                
-                # Find the index of the player in the filtered dataset
-                player_index = role_filtered_df[role_filtered_df['player_name'] == player_name].index[0]
-                scaled_index = role_filtered_df.index.get_loc(player_index)
-                
-                # Find similar players
-                distances, indices = model.kneighbors([scaled_metrics[scaled_index]])
-                similar_players = role_filtered_df.iloc[indices[0]].iloc[1:]  # Exclude the queried player
-    
-            # Display only the heading and similar players if any
-            #st.write("### Similar Players")
-            if similar_players is not None and not similar_players.empty:
+            scaler = StandardScaler()
+            scaled_metrics = scaler.fit_transform(role_filtered_df[metrics])
+
+            model = NearestNeighbors(n_neighbors=6, algorithm='auto')
+            model.fit(scaled_metrics)
+
+            player_index = role_filtered_df[role_filtered_df['player_name'] == selected_player_name].index[0]
+            scaled_index = role_filtered_df.index.get_loc(player_index)
+
+            distances, indices = model.kneighbors([scaled_metrics[scaled_index]])
+            similar_players = role_filtered_df.iloc[indices[0]].iloc[1:]  # Exclude the queried player
+
+            if not similar_players.empty:
+                st.write("### Similar Players")
                 for _, row in similar_players.iterrows():
                     st.write(f" - {row['player_name']} ({row['team_name']})")
             else:
