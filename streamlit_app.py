@@ -117,10 +117,12 @@ parameter_display_names2 = {
 parameter_display_names3 = {'player_name': 'Player Name',
                            'matches_played': 'Matches Played',
                            'team_name': 'Team Name',
-                           'player_role': 'Player Role'}
+                           'player_role': 'Player Role',
+                           'country_y': 'Region',
+                           'level_y': 'Level'}
 
 # Core columns to display for each player
-core_columns = ['player_name', 'matches_played', 'team_name', 'player_role']
+core_columns = ['player_name', 'matches_played', 'team_name', 'country_y', 'level_y', 'player_role']
 
 # Streamlit Multi-Page Setup
 st.set_page_config(page_title="Afriskaut Internal Scouting Tool", layout="wide")
@@ -131,11 +133,8 @@ page = st.sidebar.selectbox("Select page", ["Metric Table", "Player Similarity &
 # DataFrame Demo Page
 if page == "Metric Table":
     st.image("Afriskaut Logo White.png", width=100)
-    #st.title("Metric Table")
-
-    # Assign 'goalkeeper' to players without a role
     
-    # Fill NaN values in 'player_role' column with 'Goalkeeper' to handle missing values
+    # Handle missing player roles
     df['player_role'] = df['player_role'].fillna('Goalkeeper')
     
     # Define position categories for organizational purposes
@@ -146,95 +145,98 @@ if page == "Metric Table":
         'Goalkeeper': ['Goalkeeper']
     }
     
-    # Define the set of forward roles that can be combined
+    # Define forward roles
     forward_roles = {'Left Winger', 'Right Winger', 'Supporting Striker', 'Center Forward'}
     
-    # Function to filter players by role based on specified criteria
+    # Function to filter players by role
     def filter_by_selected_role(df, selected_role):
-        # Condition 1: Players with the selected role as their sole or primary role
         primary_role_df = df[df['player_role'].str.split(',').str[0].str.strip() == selected_role]
-    
-        # Condition 2: For forward roles, include players with combinations involving the selected role
         if selected_role in forward_roles:
-            # Include players where the selected role is in a combination of forward roles
             combined_roles_df = df[
-                df['player_role'].apply(lambda x: any(role.strip() == selected_role for role in x.split(',')))  # Check if selected_role is present
-                & df['player_role'].apply(lambda x: set(r.strip() for r in x.split(',')) <= forward_roles)  # Ensure all roles in combination are forward roles
+                df['player_role'].apply(lambda x: any(role.strip() == selected_role for role in x.split(','))) &
+                df['player_role'].apply(lambda x: set(r.strip() for r in x.split(',')) <= forward_roles)
             ]
-            
-            # Concatenate primary role players and forward role combinations
             return pd.concat([primary_role_df, combined_roles_df]).drop_duplicates()
-    
-        # For other roles, only include players with the role as their sole or primary role
         return primary_role_df
     
-    # Player Search Functionality
+    # Search by player name (remains untouched)
     player_name_search = st.text_input("Search Player by Name (Optional)", "", help="Enter a player name to search.")
+    
     if player_name_search:
-        # Filter DataFrame by player name, ignoring other filters
         search_df = df[df['player_name'].str.contains(player_name_search, case=False, na=False)]
-        
         if not search_df.empty:
-            # Get the first matching player's role to determine relevant metrics
-            player_role = search_df.iloc[0]['player_role'].split(',')[0].strip().lower()  # Get primary role
+            player_role = search_df.iloc[0]['player_role'].split(',')[0].strip().lower()
             role_columns = role_metrics2.get(player_role, [])
             display_columns = core_columns + role_columns
-            
-            # Filter and select relevant columns for the player's role
             search_df = search_df[display_columns]
-            
-            # Normalize metrics that start with "success_"
             for col in search_df.columns:
                 if col.startswith("success_"):
-                    search_df[col] = search_df[col] * 100
-            
-            # Rename columns based on parameter_display_names2 and parameter_display_names3
+                    search_df[col] *= 100
             search_df = search_df.rename(columns={**parameter_display_names2, **parameter_display_names3})
-            
-            # Display the result
             st.write(f"## Search Results for '{player_name_search}'")
             st.dataframe(search_df)
-        
         else:
             st.warning(f"No player found with the name '{player_name_search}'.")
     else:
-        # Step 1: Select a broad position category
-        selected_position_category = st.selectbox("Select Position Category", list(position_categories.keys()), help="Choose a position category.")
+        # Filters: Country and Level
+        st.write("### Filters")
         
-        # Step 2: Populate player roles based on the selected position category
+        # Country Filter
+        countries = sorted(df['country_y'].dropna().unique())
+        selected_country = st.selectbox("Select Country", ['All'] + countries, help="Filter by country.")
+        
+        # Apply country filter
+        if selected_country != 'All':
+            df = df[df['country_y'] == selected_country]
+        
+        # Level Filter
+        levels = sorted(df['level_y'].dropna().unique())
+        levels = ['Unclassified'] + [level for level in levels if level != '-']
+        selected_level = st.selectbox("Select Level", ['All'] + levels, help="Filter by player level.")
+        
+        # Apply level filter
+        if selected_level != 'All':
+            if selected_level == 'Unclassified':
+                df = df[df['level_y'] == '-']
+            else:
+                df = df[df['level_y'] == selected_level]
+        
+        # Position and Role Filters
+        selected_position_category = st.selectbox("Select Position Category", list(position_categories.keys()), help="Choose a position category.")
         available_roles = position_categories[selected_position_category]
         selected_role = st.selectbox("Select Specific Player Role", available_roles, help="Choose a player role to view relevant metrics.")
         
-        # Filter based on matches played
-        matches_played = st.slider("Matches Played ", min_value=1, max_value=7, value=3, help="Filter players by the number of matches played.")
-        filtered_df = df[df['matches_played'] >= matches_played]
+        # Matches Played Filter
+        matches_played = st.slider("Matches Played", min_value=1, max_value=7, value=3, help="Filter players by the number of matches played.")
+        df = df[df['matches_played'] >= matches_played]
         
-        # Apply the role filtering function to get the filtered DataFrame
-        filtered_df = filter_by_selected_role(filtered_df, selected_role)
+        # Apply role filtering
+        df = filter_by_selected_role(df, selected_role)
         
         # Select columns based on role-specific metrics
         role_columns = role_metrics2.get(selected_role.lower(), [])
         display_columns = core_columns + role_columns
-        filtered_df = filtered_df[display_columns]
+        df = df[display_columns]
         
-        # Normalize metrics starting with "success_"
-        for col in filtered_df.columns:
+        # Normalize metrics that start with "success_"
+        for col in df.columns:
             if col.startswith("success_"):
-                filtered_df[col] = filtered_df[col] * 100
+                df[col] *= 100
         
-        # Rename columns based on mappings for display
-        filtered_df = filtered_df.rename(columns={**parameter_display_names2, **parameter_display_names3})
+        # Rename columns for display
+        df = df.rename(columns={**parameter_display_names2, **parameter_display_names3})
         
         # Sort by 'Aggregate Weighted Score' if it exists
-        if 'Aggregate Weighted Score' in filtered_df.columns:
-            filtered_df = filtered_df.sort_values(by="Aggregate Weighted Score", ascending=False)
+        if 'Aggregate Weighted Score' in df.columns:
+            df = df.sort_values(by="Aggregate Weighted Score", ascending=False)
         
-        # Display top `num_rows` players based on the selected filters
+        # Number of Rows to Display
         num_rows = st.slider("Number of Rows to Display", min_value=1, max_value=100, value=5, help="Select the number of rows to display.")
-        filtered_df = filtered_df.head(num_rows).round(2)
+        df = df.head(num_rows).round(2)
         
         st.write(f"## Displaying Top {num_rows} {selected_role}s")
-        st.dataframe(filtered_df)
+        st.dataframe(df)
+
 
 # Pizza Chart Demo Page
 elif page == "Player Similarity & Percentile Rankings":
