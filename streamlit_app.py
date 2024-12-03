@@ -8,7 +8,7 @@ import numpy as np
 import plotly.express as px
 
 # Load the dataset
-df = pd.read_csv("general.csv")  # Update with the actual path to your data
+df = pd.read_csv("general.csv")  
 
 # Define Role-Based Metrics
 role_metrics = {
@@ -137,7 +137,7 @@ if page == "Metric Table":
     # Handle missing player roles
     df['player_role'] = df['player_role'].fillna('Goalkeeper')
     
-    # Define position categories for organizational purposes
+    
     position_categories = {
         'Defender': ['Center Back', 'Left Back', 'Right Back'],
         'Midfielder': ['Defensive Midfielder', 'Central Midfielder', 'Attacking Midfielder'],
@@ -860,9 +860,12 @@ elif page == "Interactive Plots":
         # Handle multiple roles
         df['player_roles'] = df['player_role'].str.split(',').apply(lambda x: [role.strip().lower() for role in x])
         
+        # Exclude specific roles from the dropdown
+        excluded_roles = {'left midfielder', 'right midfielder'}
+        roles_list = set(role for roles in df['player_roles'] for role in roles if role not in excluded_roles)
+        
         # Display dropdown for position selection
-        roles_list = set(role for roles in df['player_roles'] for role in roles)
-        selected_position = st.selectbox("Select Role", options=list(roles_list))
+        selected_position = st.selectbox("Select Role", options=sorted(roles_list))
         
         # Filter data for selected position
         filtered_data = df[df['player_roles'].apply(lambda x: selected_position in x)]
@@ -892,7 +895,7 @@ elif page == "Interactive Plots":
             y=metric2_display_names[metric2],
             hover_name="player_name",
             hover_data={"team_name": True,  "matches_played": True},
-            text=None
+                text=None
         )
         
         fig.update_traces(marker=dict(size=10), textposition='top center', hoverinfo='text+name')
@@ -903,7 +906,7 @@ elif page == "Interactive Plots":
         )
         
         st.plotly_chart(fig, use_container_width=True)
-    
-    # Assuming df is your DataFrame and role_metrics2 is already defined, run the Streamlit app
-    if __name__ == "__main__":
-        scatter_plot_page(df)
+
+# Assuming df is your DataFrame and role_metrics2 is already defined, run the Streamlit app
+if __name__ == "__main__":
+    scatter_plot_page(df)
