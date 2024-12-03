@@ -908,5 +908,5 @@ elif page == "Interactive Plots":
         st.plotly_chart(fig, use_container_width=True)
 
 # Assuming df is your DataFrame and role_metrics2 is already defined, run the Streamlit app
-if __name__ == "__main__":
-    scatter_plot_page(df)
+    if __name__ == "__main__":
+        scatter_plot_page(df)
